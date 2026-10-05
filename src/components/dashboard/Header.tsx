@@ -38,7 +38,8 @@ export function Header({ queryStatus, latestTimestamp }: { queryStatus: QuerySta
     <header className="flex shrink-0 flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 pb-1 pt-3">
       <div className="flex min-w-0 items-center gap-5">
         <div className="leading-none">
-          <MatrixLogo />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/matrix-iot-logo.png" alt="MATRIX IOT" width={139} height={30} className="block h-[30px] w-auto" />
           <div className="mt-1 text-[16px] font-bold leading-none text-[#0b2a5b]">{STATION.product}</div>
         </div>
         <div className="hidden border-l border-[#d5e0ee] pl-5 text-[15px] leading-snug text-[#0b2a5b] lg:block">
