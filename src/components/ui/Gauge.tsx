@@ -4,10 +4,10 @@ export interface GaugeSegment { from: number; to: number; color: string }
 
 /** Semicircular gauge. Draws only what it is given; value === null shows no needle/marker. */
 export function Gauge({
-  min, max, value, segments, ticks, needle = false, children,
+  min, max, value, segments, ticks, needle = false, viewBox = "-10 0 220 152", children,
 }: {
   min: number; max: number; value: number | null; segments: GaugeSegment[];
-  ticks: number[]; needle?: boolean; children?: ReactNode;
+  ticks: number[]; needle?: boolean; viewBox?: string; children?: ReactNode;
 }) {
   const cx = 100, cy = 100, R = 80;
   const clamp = (v: number) => Math.min(Math.max(v, min), max);
@@ -24,7 +24,7 @@ export function Gauge({
   const mark = value === null ? null : pt(value, R);
 
   return (
-    <svg viewBox="-10 0 220 152" preserveAspectRatio="xMidYMid meet" className="h-full w-full">
+    <svg viewBox={viewBox} preserveAspectRatio="xMidYMid meet" className="h-full w-full">
       <path d={arc(min, max)} fill="none" stroke="#eaf0f7" strokeWidth={17} />
       {segments.map((s) => (
         <path key={s.from} d={arc(s.from, s.to)} fill="none" stroke={s.color} strokeWidth={13} />

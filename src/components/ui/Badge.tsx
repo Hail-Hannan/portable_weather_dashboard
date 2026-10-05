@@ -9,11 +9,11 @@ const TONES: Record<BadgeTone, { bg: string; fg: string }> = {
   info: { bg: "#1d5fd6", fg: "#ffffff" },
 };
 
-export function Badge({ tone, label }: { tone: BadgeTone; label: string }) {
+export function Badge({ tone, label, size = "md" }: { tone: BadgeTone; label: string; size?: "md" | "lg" }) {
   const t = TONES[tone];
   return (
     <span
-      className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.04em]"
+      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 font-bold uppercase tracking-[0.04em] ${size === "lg" ? "text-[13px]" : "text-[11.5px]"}`}
       style={{ backgroundColor: t.bg, color: t.fg }}
     >
       {label}
