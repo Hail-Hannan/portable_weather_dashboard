@@ -37,12 +37,12 @@ export function TemperatureCard({ envRow, rows }: { envRow: SensorDataRow | null
         badge={<Badge tone={ev.severity === "warning" ? "orange" : ev.severity} label={ev.label} />}
       />
       <div className="-mx-3 min-h-0 flex-1">
-        <Gauge min={0} max={50} value={temp} segments={SEGMENTS} ticks={[0, 10, 20, 30, 40, 50]} viewBox="-4 0 208 121">
-          <text x={100} y={97} textAnchor="middle" fontSize={36} fontWeight={700} fill={temp === null ? "#8a9bb0" : "#0b2a5b"}>
+        <Gauge min={0} max={50} value={temp} segments={SEGMENTS} ticks={[0, 10, 20, 30, 40, 50]} viewBox="-2 4 204 108">
+          <text x={100} y={95} textAnchor="middle" fontSize={37} fontWeight={700} fill={temp === null ? "#8a9bb0" : "#0b2a5b"}>
             {temp === null ? "N/A" : `${temp.toFixed(1)}`}
-            {temp !== null && <tspan fontSize={18} fontWeight={600}> °C</tspan>}
+            {temp !== null && <tspan fontSize={18.5} fontWeight={600}> °C</tspan>}
           </text>
-          <text x={100} y={117} textAnchor="middle" fontSize={12} fill="#33465e">
+          <text x={100} y={110} textAnchor="middle" fontSize={12.4} fill="#33465e">
             {feels === null ? "Feels like N/A" : `Feels like ${feels.toFixed(1)}°C`}
           </text>
         </Gauge>
