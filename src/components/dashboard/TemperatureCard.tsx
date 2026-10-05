@@ -31,30 +31,31 @@ export function TemperatureCard({ envRow, rows }: { envRow: SensorDataRow | null
   return (
     <Card className="min-h-0 flex-1 gap-1.5">
       <CardHeader
-        icon={<Thermometer className="h-5 w-5 text-[#e11d1d]" />}
+        icon={<Thermometer className="h-6 w-6 text-[#e11d1d]" />}
+        size="lg"
         iconBg="#fdecec"
         title="Temperature"
-        badge={<Badge tone={ev.severity === "warning" ? "orange" : ev.severity} label={ev.label} />}
+        badge={<Badge tone={ev.severity === "warning" ? "orange" : ev.severity} label={ev.label} size="lg" />}
       />
       <div className="min-h-0 flex-1">
-        <Gauge min={0} max={50} value={temp} segments={SEGMENTS} ticks={[0, 10, 20, 30, 40, 50]}>
-          <text x={100} y={96} textAnchor="middle" fontSize={27} fontWeight={700} fill={temp === null ? "#8a9bb0" : "#0b2a5b"}>
+        <Gauge min={0} max={50} value={temp} segments={SEGMENTS} ticks={[0, 10, 20, 30, 40, 50]} viewBox="-10 0 220 126">
+          <text x={100} y={99} textAnchor="middle" fontSize={34} fontWeight={700} fill={temp === null ? "#8a9bb0" : "#0b2a5b"}>
             {temp === null ? "N/A" : `${temp.toFixed(1)}`}
-            {temp !== null && <tspan fontSize={14} fontWeight={600}> °C</tspan>}
+            {temp !== null && <tspan fontSize={17} fontWeight={600}> °C</tspan>}
           </text>
-          <text x={100} y={114} textAnchor="middle" fontSize={9.5} fill="#33465e">
+          <text x={100} y={119} textAnchor="middle" fontSize={11.5} fill="#33465e">
             {feels === null ? "Feels like N/A" : `Feels like ${feels.toFixed(1)}°C`}
           </text>
         </Gauge>
       </div>
-      <div className="flex shrink-0 items-center justify-center gap-1.5 text-[12px] text-[#33465e]">
-        <Droplets className="h-4 w-4 text-[#1d6af5]" />
+      <div className="flex shrink-0 items-center justify-center gap-1.5 text-[15px] text-[#33465e]">
+        <Droplets className="h-5 w-5 text-[#1d6af5]" />
         Humidity <b className={hum === null ? "text-[#8a9bb0]" : "text-[#0b2a5b]"}>{hum === null ? "N/A" : `${hum.toFixed(1)} %`}</b>
       </div>
       <div className="grid shrink-0 grid-cols-3 gap-2">
-        <Stat label="Min Today" value={f1(min)} unit="°C" />
-        <Stat label="Average" value={f1(average(today))} unit="°C" />
-        <Stat label="Max Today" value={f1(max)} unit="°C" />
+        <Stat label="Min Today" value={f1(min)} unit="°C" size="lg" />
+        <Stat label="Average" value={f1(average(today))} unit="°C" size="lg" />
+        <Stat label="Max Today" value={f1(max)} unit="°C" size="lg" />
       </div>
     </Card>
   );
