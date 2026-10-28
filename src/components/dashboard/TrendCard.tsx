@@ -5,6 +5,7 @@ import { LineChart as LineIcon } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { Card } from "@/components/ui/Card";
 import { formatHourMinute, msToKmh } from "@/lib/utils/dashboard";
+import { calcSolarIndex } from "@/lib/utils/solar";
 import type { DayRow } from "@/lib/supabase/queries";
 
 const HOUR = 3600_000;
@@ -14,20 +15,22 @@ const WIND = "#1d6af5";
 const HUM = "#22a559";
 const SOLAR = "#f5b800";
 
-interface Pt { t: number; temp?: number; wind?: number; hum?: number }
+interface Pt { t: number; temp?: number; wind?: number; hum?: number; solar?: number }
 
 function bucketise(rows: DayRow[]): Pt[] {
-  const m = new Map<number, { t: number[]; w: number[]; h: number[] }>();
+  const m = new Map<number, { t: number[]; w: number[]; h: number[]; s: number[] }>();
   for (const r of rows) {
     const k = Math.floor(new Date(r.created_at).getTime() / BUCKET) * BUCKET + BUCKET / 2;
-    const b = m.get(k) ?? { t: [], w: [], h: [] };
+    const b = m.get(k) ?? { t: [], w: [], h: [], s: [] };
     if (r.temperature !== null) b.t.push(r.temperature);
     if (r.wind_speed !== null) b.w.push(msToKmh(r.wind_speed));
     if (r.humidity !== null) b.h.push(r.humidity);
+    const si = calcSolarIndex(r.temperature, r.humidity);
+    if (si !== null) b.s.push(si);
     m.set(k, b);
   }
   const avg = (a: number[]) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : undefined);
-  return [...m.entries()].sort((a, b) => a[0] - b[0]).map(([t, b]) => ({ t, temp: avg(b.t), wind: avg(b.w), hum: avg(b.h) }));
+  return [...m.entries()].sort((a, b) => a[0] - b[0]).map(([t, b]) => ({ t, temp: avg(b.t), wind: avg(b.w), hum: avg(b.h), solar: avg(b.s) }));
 }
 
 function LegendItem({ color, label, off }: { color: string; label: string; off?: boolean }) {
@@ -56,7 +59,7 @@ export function TrendCard({ rows }: { rows: DayRow[] }) {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <LegendItem color={TEMP} label="Temperature (°C)" />
           <LegendItem color={WIND} label="Wind Speed (km/h)" />
-          <LegendItem color={SOLAR} label="Solar Radiation (W/m²) · N/A" off />
+          <LegendItem color={SOLAR} label="Solar Radiation Index (est.)" />
           <LegendItem color={HUM} label="Humidity (%)" />
         </div>
       </div>
@@ -72,11 +75,12 @@ export function TrendCard({ rows }: { rows: DayRow[] }) {
               <YAxis domain={[0, top]} tick={{ fontSize: 11, fill: "#475b73" }} axisLine={false} tickLine={false} />
               <Tooltip
                 labelFormatter={(v: number) => formatHourMinute(v)}
-                formatter={(v: number, name: string) => [name === "temp" ? `${v.toFixed(1)} °C` : name === "wind" ? `${v.toFixed(1)} km/h` : `${v.toFixed(1)} %`, name === "temp" ? "Temperature" : name === "wind" ? "Wind speed" : "Humidity"]}
+                formatter={(v: number, name: string) => [name === "temp" ? `${v.toFixed(1)} °C` : name === "wind" ? `${v.toFixed(1)} km/h` : name === "solar" ? `${v.toFixed(0)} index` : `${v.toFixed(1)} %`, name === "temp" ? "Temperature" : name === "wind" ? "Wind speed" : name === "solar" ? "Solar index (est.)" : "Humidity"]}
                 contentStyle={{ borderRadius: 10, border: "1px solid #e1e9f3", fontSize: 12 }}
               />
               <Line dataKey="temp" type="monotone" stroke={TEMP} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} />
               <Line dataKey="wind" type="monotone" stroke={WIND} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} />
+              <Line dataKey="solar" type="monotone" stroke={SOLAR} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} />
               <Line dataKey="hum" type="monotone" stroke={HUM} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} />
             </LineChart>
           </ResponsiveContainer>

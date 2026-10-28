@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/Card";
 import { TONE, freshnessText, formatHourMinute, msToKmh } from "@/lib/utils/dashboard";
 import { isDataStale } from "@/lib/utils/format";
 import { extreme, rowsSince, startOfTodayMs } from "@/lib/utils/stats";
+import { calcSolarIndex, SOLAR_INDEX_UNIT } from "@/lib/utils/solar";
 import type { QueryStatus } from "@/hooks/useLatestReading";
 import type { SensorDataRow } from "@/lib/supabase/types";
 import type { DayRow } from "@/lib/supabase/queries";
@@ -75,6 +76,7 @@ export function SummaryCard(props: {
         : null,
     "min"
   );
+  const solar = extreme(today, (r) => calcSolarIndex(r.temperature, r.humidity), "max");
   const t = (ms?: number) => (ms === undefined ? undefined : formatHourMinute(ms));
 
   return (
@@ -86,7 +88,7 @@ export function SummaryCard(props: {
         <Row label="Highest Temperature" value={hiTemp ? `${hiTemp.value.toFixed(1)} °C` : "N/A"} time={t(hiTemp?.at)} />
         <Row label="Strongest Wind Gust" value={gust ? `${msToKmh(gust.value).toFixed(0)} km/h` : "N/A"} time={t(gust?.at)} />
         <Row label="Closest Lightning" value={lightning ? `${lightning.value.toFixed(1)} km` : hasRows ? "None" : "N/A"} time={t(lightning?.at)} />
-        <Row label="Highest Solar Radiation" value="N/A" />
+        <Row label="Highest Solar Index (est.)" value={solar ? `${solar.value.toFixed(0)} ${SOLAR_INDEX_UNIT}` : "N/A"} time={t(solar?.at)} />
         <Row label="Total Rainfall" value="N/A" />
       </div>
       <StationHealth {...props} />
