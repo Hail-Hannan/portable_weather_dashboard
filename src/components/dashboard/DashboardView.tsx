@@ -38,7 +38,7 @@ export function DashboardView(props: {
           <div className="min-h-[400px] xl:min-h-0"><WindDirectionCard weatherRow={weatherRow} rows={rows} /></div>
           <div className="flex min-h-[400px] flex-col gap-3 xl:min-h-0">
             <TemperatureCard envRow={envRow} rows={rows} />
-            <SolarCard />
+            <SolarCard envRow={envRow} />
           </div>
         </div>
 
